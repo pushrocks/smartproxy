@@ -1,8 +1,8 @@
 import { expect, tap } from '@pushrocks/tapbundle';
-import * as smartproxy from '../ts/index'
+import * as smartproxy from '../ts/index';
 
 tap.test('first test', async () => {
-  console.log(smartproxy.standardExport)
-})
+  console.log(smartproxy);
+});
 
-tap.start()
+tap.start();
