@@ -1,6 +1,6 @@
 export interface IHostConfig {
   hostName: string;
-  destination: string;
+  destinationIp: string;
   destinationPort: number;
   privateKey: string;
   publicKey: string;

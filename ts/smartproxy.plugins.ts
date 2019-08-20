@@ -5,6 +5,6 @@ export { https };
 
 // third party scope
 import express from 'express';
-import * as httpProxyMiddleware from 'http-proxy-middleware';
+import httpProxyMiddleware from 'http-proxy-middleware';
 
 export { express, httpProxyMiddleware };
