@@ -5,7 +5,7 @@ import { SmartproxyRouter } from './smartproxy.classes.router';
 
 export class SmartProxy {
   public expressInstance: plugins.express.Express;
-  public httpsServer: plugins.https.Server;
+  public httpsServer: plugins.https.Server | plugins.http.Server;
   public router = new SmartproxyRouter();
 
   public hostCandidates: interfaces.IHostConfig[] = [];
@@ -20,30 +20,26 @@ export class SmartProxy {
    */
   public async start() {
     this.expressInstance = plugins.express();
-    this.httpsServer = plugins.https.createServer(this.expressInstance);
+    this.httpsServer = plugins.http.createServer(this.expressInstance);
     for (const hostCandidate of this.hostCandidates) {
-      this.httpsServer.addContext(hostCandidate.hostName, {
+      /* this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
         key: hostCandidate.privateKey
-      });
+      }); */
     }
 
     // proxy middleware options
     const proxyOptions: plugins.httpProxyMiddleware.Config = {
-      target: 'http://www.example.org', // target host
+      target: 'https://nullresolve.lossless.one',
       changeOrigin: true, // needed for virtual hosted sites
       ws: true, // proxy websockets
-      pathRewrite: {
-        '^/api/old-path': '/api/new-path', // rewrite path
-        '^/api/remove/path': '/path' // remove base path
-      },
       router: (req: plugins.express.Request) => {
         return this.router.routeReq(req);
       }
     };
 
     this.expressInstance.use(plugins.httpProxyMiddleware(proxyOptions));
-
+    this.httpsServer.listen(3000);
 
 
   }
