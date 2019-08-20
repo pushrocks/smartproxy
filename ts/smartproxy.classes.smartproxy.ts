@@ -13,7 +13,7 @@ export class SmartProxy {
   public addHostCandidate(hostCandidate: interfaces.IHostConfig) {
     // TODO search for old hostCandidates with that target
     this.hostCandidates.push(hostCandidate);
-  };
+  }
 
   /**
    * starts the proxyInstance

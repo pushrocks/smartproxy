@@ -1,5 +1,3 @@
 import * as plugins from './smartproxy.plugins';
 
-export class SmartproxyRouter {
-  
-}
+export class SmartproxyRouter {}
