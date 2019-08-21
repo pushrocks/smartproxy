@@ -3,7 +3,7 @@ import * as smartproxy from '../ts/index';
 
 tap.test('first test', async () => {
   const testProxy = new smartproxy.SmartProxy();
-  // await testProxy.start();
+  await testProxy.start();
 });
 
 tap.start();

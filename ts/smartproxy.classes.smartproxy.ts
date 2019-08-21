@@ -4,7 +4,6 @@ import * as interfaces from './interfaces';
 import { SmartproxyRouter } from './smartproxy.classes.router';
 
 export class SmartProxy {
-  public expressInstance: plugins.express.Express;
   public httpsServer: plugins.https.Server | plugins.http.Server;
   public router = new SmartproxyRouter();
 
@@ -19,26 +18,32 @@ export class SmartProxy {
    * starts the proxyInstance
    */
   public async start() {
-    this.expressInstance = plugins.express();
-    this.httpsServer = plugins.http.createServer(this.expressInstance);
+    this.httpsServer = plugins.http.createServer(async (req, res) => {
+      req.headers.host = this.router.routeReq(req);
+      const response = await plugins.smartrequest.request(`https://${req.headers.host}${req.url}`, {
+        method: req.method,
+        headers: req.headers
+      }, true);
+      res.statusCode = response.statusCode;
+      for (const header of Object.keys(response.headers)) {
+        res.setHeader(header, response.headers[header]);
+      }
+      response.on('data', data => {
+        res.write(data);
+      });
+      response.on('end', () => {
+        res.end();
+      });
+    });
     for (const hostCandidate of this.hostCandidates) {
       /* this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
         key: hostCandidate.privateKey
       }); */
     }
-
-    // proxy middleware options
-    const proxyOptions: plugins.httpProxyMiddleware.Config = {
-      target: 'https://nullresolve.lossless.one',
-      changeOrigin: true, // needed for virtual hosted sites
-      ws: true, // proxy websockets
-      router: (req: plugins.express.Request) => {
-        return this.router.routeReq(req);
-      }
-    };
-
-    this.expressInstance.use(plugins.httpProxyMiddleware(proxyOptions));
+    this.httpsServer.on('upgrade', (req, socket) => {
+      
+    })
     this.httpsServer.listen(3000);
 
 

@@ -4,8 +4,9 @@ import * as https from 'https';
 
 export { http, https };
 
-// third party scope
-import express from 'express';
-import httpProxyMiddleware from 'http-proxy-middleware';
+// pushrocks scope
+import * as smartrequest from '@pushrocks/smartrequest';
 
-export { express, httpProxyMiddleware };
+export {
+  smartrequest
+};
