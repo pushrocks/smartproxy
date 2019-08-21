@@ -2,6 +2,7 @@ import * as plugins from './smartproxy.plugins';
 import * as interfaces from './interfaces';
 
 import { SmartproxyRouter } from './smartproxy.classes.router';
+import { Socket } from 'net';
 
 export class SmartProxy {
   public httpsServer: plugins.https.Server | plugins.http.Server;
@@ -41,7 +42,7 @@ export class SmartProxy {
         key: hostCandidate.privateKey
       }); */
     }
-    this.httpsServer.on('upgrade', (req, socket) => {
+    this.httpsServer.on('upgrade', (req, socket: Socket) => {
       
     })
     this.httpsServer.listen(3000);
