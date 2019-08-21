@@ -1,9 +1,18 @@
 import { expect, tap } from '@pushrocks/tapbundle';
 import * as smartproxy from '../ts/index';
 
+let testProxy: smartproxy.SmartProxy;
+
 tap.test('first test', async () => {
-  const testProxy = new smartproxy.SmartProxy();
-  // await testProxy.start();
+  testProxy = new smartproxy.SmartProxy();
+});
+
+tap.test('should start the testproxy', async () => {
+  await testProxy.start();
+});
+
+tap.test('should close the testproxy', async () => {
+  await testProxy.stop();
 });
 
 tap.start();
