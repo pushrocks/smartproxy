@@ -5,20 +5,26 @@ import { TPortProxyCalls } from './smartproxy.portproxy';
 
 export class SmartProxy {
   public smartsystem = new plugins.smartsystem.Smartsystem();
-  public hostCandidates: plugins.tsclass.network.IReverseProxyConfig[] = [];
+  public reverseConfigs: plugins.tsclass.network.IReverseProxyConfig[] = [];
   public proxyWorkerFunctions: plugins.smartspawn.ModuleThread<TProxyWorkerCalls>;
   public portProxyFunctions: plugins.smartspawn.ModuleThread<TPortProxyCalls>;
 
-  public addHostCandidate(hostCandidate: plugins.tsclass.network.IReverseProxyConfig) {
+  public async updateReversConfigs(reverseConfigsArg: plugins.tsclass.network.IReverseProxyConfig[]) {
     // TODO search for old hostCandidates with that target
-    this.hostCandidates.push(hostCandidate);
+    this.reverseConfigs = reverseConfigsArg;
+    if (this.proxyWorkerFunctions) {
+      await this.proxyWorkerFunctions.updateReverseConfigs(this.reverseConfigs);
+    }
   }
 
   public async start () {
     this.proxyWorkerFunctions = await plugins.smartspawn.spawn<TProxyWorkerCalls>(new plugins.smartspawn.Worker('./smartproxy.classes.proxyworker'));
+    this.proxyWorkerFunctions.updateReverseConfigs(this.reverseConfigs);
+    
     this.portProxyFunctions = await plugins.smartspawn.spawn<TPortProxyCalls>(new plugins.smartspawn.Worker('./smartproxy.portproxy'));
-    console.log('successfully spawned proxymaster');
     await this.proxyWorkerFunctions.start();
+    
+    console.log('successfully spawned portproxy and proxyworkers!');
   }
 
   public async stop () {
