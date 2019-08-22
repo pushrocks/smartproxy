@@ -35,10 +35,10 @@ export class SmartProxy {
 
   public async stop() {
     await this.proxyWorkerFunctions.stop();
-    await plugins.smartspawn.Thread.terminate(this.portProxyFunctions);
+    await plugins.smartspawn.Thread.terminate(this.proxyWorkerFunctions);
     console.log('proxy worker stopped');
     await this.portProxyFunctions.stop();
-    await plugins.smartspawn.Thread.terminate(this.proxyWorkerFunctions);
+    await plugins.smartspawn.Thread.terminate(this.portProxyFunctions);
     console.log('portproxy stopped');
     console.log('Terminated all childs!');
   }

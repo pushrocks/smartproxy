@@ -40,11 +40,11 @@ snyk:
 # test stage
 # ====================
 
-testLTS:
+testStable:
   stage: test
   script:
   - npmci npm prepare
-  - npmci node install lts
+  - npmci node install stable
   - npmci npm install
   - npmci npm test
   coverage: /\d+.?\d+?\%\s*coverage/
