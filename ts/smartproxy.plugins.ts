@@ -1,6 +1,6 @@
 // node native scope
-import http from 'http';
-import https from 'https';
+import * as http from 'http';
+import * as https from 'https';
 
 export { http, https };
 
@@ -25,7 +25,7 @@ export {
 };
 
 // third party scope
-import ws from 'ws';
+import * as ws from 'ws';
 
 export {
   ws

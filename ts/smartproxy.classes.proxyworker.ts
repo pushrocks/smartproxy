@@ -1,16 +1,22 @@
+import { expose } from '@pushrocks/smartspawn';
 import * as plugins from './smartproxy.plugins';
 import { SmartproxyRouter } from './smartproxy.classes.router';
 
 export class ProxyWorker {
   public hostCandidates: plugins.tsclass.network.IReverseProxyConfig[] = [];
-  public httpsServer: plugins.https.Server | plugins.http.Server;
+  public httpsServer: plugins.https.Server; // | plugins.http.Server;
+  public port = 8001;
   public router = new SmartproxyRouter();
+
+  public async setPort(portArg: number) {
+    this.port = portArg;
+  }
 
   /**
    * starts the proxyInstance
    */
   public async start() {
-    this.httpsServer = plugins.http.createServer(async (req, res) => {
+    this.httpsServer = plugins.https.createServer(async (req, res) => {
       const destinationConfig = this.router.routeReq(req);
       const response = await plugins.smartrequest.request(
         `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`,
@@ -58,12 +64,13 @@ export class ProxyWorker {
       });
     });
 
-    this.httpsServer.listen(3000);
+    this.httpsServer.listen(this.port);
+    console.log(`OK: now listening for new connections on port ${this.port}`);
   }
 
   public async updateCandidates(arrayOfReverseCandidates: plugins.tsclass.IReverseProxyConfig[]) {
     this.hostCandidates = arrayOfReverseCandidates;
-    this.router
+    this.router.setNewCandidates(arrayOfReverseCandidates);
     for (const hostCandidate of this.hostCandidates) {
       this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
@@ -77,5 +84,23 @@ export class ProxyWorker {
     this.httpsServer.close(() => {
       done.resolve();
     });
+    await done.promise;
   }
 }
+
+const proxyWorkerInstance = new ProxyWorker();
+
+// the following is interesting for the master process only
+const proxyWorkerCalls = {
+  stop: async () => {
+    await proxyWorkerInstance.stop();
+  },
+  start: async () => {
+    await proxyWorkerInstance.start();
+  },
+  updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {}
+};
+
+export type TProxyWorkerCalls = typeof proxyWorkerCalls;
+expose(proxyWorkerCalls);
+console.log('ProxyWorker initialized');
