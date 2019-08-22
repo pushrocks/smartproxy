@@ -3,10 +3,6 @@ import * as smartproxy from '../ts/index';
 
 let testProxy: smartproxy.SmartProxy;
 
-if (process.env.CI) {
-  process.exit(0);
-}
-
 tap.test('first test', async () => {
   testProxy = new smartproxy.SmartProxy();
 });
