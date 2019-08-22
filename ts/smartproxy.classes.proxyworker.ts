@@ -47,19 +47,19 @@ export class ProxyWorker {
         wscConnected.resolve();
       });
 
-      ws.on('message', async (message) => {
+      ws.on('message', async message => {
         await wscConnected.promise;
         wsc.emit('message', message);
       });
-      wsc.on('message', (message) => {
+      wsc.on('message', message => {
         ws.emit('message', message);
       });
 
       // handle closing
-      ws.on('close', (message) => {
+      ws.on('close', message => {
         wsc.close();
       });
-      wsc.on('close', (message) => {
+      wsc.on('close', message => {
         ws.close();
       });
     });

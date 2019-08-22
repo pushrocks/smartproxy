@@ -15,7 +15,7 @@ tap.test('should start the testproxy', async () => {
   await testProxy.start();
 });
 
-tap.test('should wait for 5 seconds', async (tools) => {
+tap.test('should wait for 5 seconds', async tools => {
   await tools.delayFor(1000);
 });
 

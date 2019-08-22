@@ -1,5 +1,7 @@
 # gitzone ci_default
 image: registry.gitlab.com/hosttoday/ht-docker-node:npmci
+variables:
+  GIT_STRATEGY: clone
 
 cache:
   paths:
