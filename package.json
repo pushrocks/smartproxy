@@ -23,10 +23,10 @@
   "dependencies": {
     "@pushrocks/smartnetwork": "^1.1.6",
     "@pushrocks/smartpromise": "^3.0.2",
-    "@pushrocks/smartrequest": "^1.1.20",
+    "@pushrocks/smartrequest": "^1.1.23",
     "@pushrocks/smartspawn": "^2.0.8",
-    "@pushrocks/smartsystem": "^2.0.6",
-    "@tsclass/tsclass": "^2.0.4",
+    "@pushrocks/smartsystem": "^2.0.7",
+    "@tsclass/tsclass": "^2.0.5",
     "@types/ws": "^6.0.2",
     "ws": "^7.1.2"
   },

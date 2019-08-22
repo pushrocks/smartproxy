@@ -15,6 +15,7 @@ export class SmartProxy {
   public async start () {
     this.proxyMasterFunctions = await plugins.smartspawn.spawn<TProxyMasterCalls>(new plugins.smartspawn.Worker('./smartproxy.classes.proxymaster'));
     console.log('successfully spawned proxymaster');
+    await this.proxyMasterFunctions.start();
   }
 
   public async stop () {

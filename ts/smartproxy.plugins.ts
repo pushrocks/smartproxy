@@ -1,6 +1,5 @@
 // node native scope
-
-import cluster from 'cluster';
+import * as cluster from 'cluster';
 import http from 'http';
 import https from 'https';
 
@@ -17,11 +16,13 @@ export {
 import * as smartpromise from '@pushrocks/smartpromise';
 import * as smartrequest from '@pushrocks/smartrequest';
 import * as smartspawn from '@pushrocks/smartspawn';
+import * as smartsystem from '@pushrocks/smartsystem';
 
 export {
   smartrequest,
   smartpromise,
-  smartspawn
+  smartspawn,
+  smartsystem,
 };
 
 // third party scope
