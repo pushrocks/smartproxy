@@ -38,11 +38,14 @@ export class ProxyWorker {
       });
     });
 
+    const Websocket = await import('ws');
+
     // Enable websockets
     const wss = new plugins.ws.Server({ server: this.httpsServer });
     wss.on('connection', function connection(ws) {
       const wscConnected = plugins.smartpromise.defer();
-      const wsc = new plugins.ws(`${ws.url}`);
+      
+      const wsc = new Websocket.default(`${ws.url}`);
       wsc.on('open', () => {
         wscConnected.resolve();
       });
