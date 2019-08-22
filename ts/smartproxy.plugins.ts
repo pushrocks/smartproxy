@@ -1,17 +1,27 @@
 // node native scope
-import crypto from 'crypto';
+
+import cluster from 'cluster';
 import http from 'http';
 import https from 'https';
 
-export { crypto, http, https };
+export { cluster, http, https };
+
+// tsclass scope
+import * as tsclass from '@tsclass/tsclass';
+
+export {
+  tsclass
+};
 
 // pushrocks scope
 import * as smartpromise from '@pushrocks/smartpromise';
 import * as smartrequest from '@pushrocks/smartrequest';
+import * as smartspawn from '@pushrocks/smartspawn';
 
 export {
   smartrequest,
-  smartpromise
+  smartpromise,
+  smartspawn
 };
 
 // third party scope

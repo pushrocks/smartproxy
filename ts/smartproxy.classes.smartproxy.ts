@@ -1,21 +1,24 @@
 import * as plugins from './smartproxy.plugins';
-import * as interfaces from './interfaces';
+
+import { TProxyMasterCalls } from './smartproxy.classes.proxymaster';
 
 export class SmartProxy {
 
-  public hostCandidates: interfaces.IHostConfig[] = [];
+  public hostCandidates: plugins.tsclass.network.IReverseProxyConfig[] = [];
+  public proxyMasterFunctions: plugins.smartspawn.ModuleThread<TProxyMasterCalls>;
 
-  public addHostCandidate(hostCandidate: interfaces.IHostConfig) {
+  public addHostCandidate(hostCandidate: plugins.tsclass.network.IReverseProxyConfig) {
     // TODO search for old hostCandidates with that target
     this.hostCandidates.push(hostCandidate);
   }
 
-  async start () {
-    
+  public async start () {
+    this.proxyMasterFunctions = await plugins.smartspawn.spawn<TProxyMasterCalls>(new plugins.smartspawn.Worker('./smartproxy.classes.proxymaster'));
+    console.log('successfully spawned proxymaster');
   }
 
-  async stop () {
-
+  public async stop () {
+    await this.proxyMasterFunctions.terminateMaster();
   }
 
 

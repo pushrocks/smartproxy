@@ -1,8 +1,8 @@
 import * as plugins from './smartproxy.plugins';
-import * as interfaces from './interfaces';
 import { SmartproxyRouter } from './smartproxy.classes.router';
 
 export class ProxyWorker {
+  public hostCandidates: plugins.tsclass.network.IReverseProxyConfig[] = [];
   public httpsServer: plugins.https.Server | plugins.http.Server;
   public router = new SmartproxyRouter();
 
@@ -11,14 +11,14 @@ export class ProxyWorker {
    */
   public async start() {
     this.httpsServer = plugins.http.createServer(async (req, res) => {
-      req.headers.host = this.router.routeReq(req);
+      const destinationConfig = this.router.routeReq(req);
       const response = await plugins.smartrequest.request(
-        `https://${req.headers.host}${req.url}`,
+        `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`,
         {
           method: req.method,
           headers: req.headers
         },
-        true
+        true // lets make this streaming
       );
       res.statusCode = response.statusCode;
       for (const header of Object.keys(response.headers)) {
@@ -31,12 +31,6 @@ export class ProxyWorker {
         res.end();
       });
     });
-    for (const hostCandidate of this.hostCandidates) {
-      /* this.httpsServer.addContext(hostCandidate.hostName, {
-        cert: hostCandidate.publicKey,
-        key: hostCandidate.privateKey
-      }); */
-    }
 
     // Enable websockets
     const wss = new plugins.ws.Server({ server: this.httpsServer });
@@ -67,8 +61,15 @@ export class ProxyWorker {
     this.httpsServer.listen(3000);
   }
 
-  public async update() {
-    await this.start();
+  public async updateCandidates(arrayOfReverseCandidates: plugins.tsclass.IReverseProxyConfig[]) {
+    this.hostCandidates = arrayOfReverseCandidates;
+    this.router
+    for (const hostCandidate of this.hostCandidates) {
+      this.httpsServer.addContext(hostCandidate.hostName, {
+        cert: hostCandidate.publicKey,
+        key: hostCandidate.privateKey
+      });
+    }
   }
 
   public async stop() {
