@@ -1,9 +1,8 @@
 // node native scope
-import * as cluster from 'cluster';
 import http from 'http';
 import https from 'https';
 
-export { cluster, http, https };
+export { http, https };
 
 // tsclass scope
 import * as tsclass from '@tsclass/tsclass';
