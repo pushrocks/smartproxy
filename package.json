@@ -13,21 +13,21 @@
     "format": "(gitzone format)"
   },
   "devDependencies": {
-    "@gitzone/tsbuild": "^2.0.22",
+    "@gitzone/tsbuild": "^2.1.17",
     "@gitzone/tstest": "^1.0.15",
     "@pushrocks/tapbundle": "^3.0.13",
-    "@types/node": "^12.7.2",
-    "tslint": "^5.19.0",
+    "@types/node": "^12.7.5",
+    "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.15.0"
   },
   "dependencies": {
-    "@pushrocks/smartnetwork": "^1.1.6",
-    "@pushrocks/smartpromise": "^3.0.2",
-    "@pushrocks/smartrequest": "^1.1.23",
+    "@pushrocks/smartnetwork": "^1.1.14",
+    "@pushrocks/smartpromise": "^3.0.5",
+    "@pushrocks/smartrequest": "^1.1.27",
     "@pushrocks/smartspawn": "^2.0.9",
-    "@pushrocks/smartsystem": "^2.0.8",
-    "@tsclass/tsclass": "^2.0.5",
-    "@types/ws": "^6.0.2",
+    "@pushrocks/smartsystem": "^2.0.9",
+    "@tsclass/tsclass": "^2.0.6",
+    "@types/ws": "^6.0.3",
     "ws": "^7.1.2"
   },
   "files": [
