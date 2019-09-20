@@ -97,8 +97,17 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     }, async (req, res) => {
       console.log('got request');
       const destinationConfig = this.router.routeReq(req);
+      let destinationUrl: string;
+      if (destinationConfig) {
+        destinationUrl = `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`;
+      } else {
+        res.writeHead(404);
+        res.end('This route is not available on this server\n');
+        return;
+      }
+      console.log(destinationUrl);
       const response = await plugins.smartrequest.request(
-        `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`,
+        destinationUrl,
         {
           method: req.method,
           headers: req.headers
