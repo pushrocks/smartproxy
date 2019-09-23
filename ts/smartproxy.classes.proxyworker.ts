@@ -3,7 +3,7 @@ import * as plugins from './smartproxy.plugins';
 import { SmartproxyRouter } from './smartproxy.classes.router';
 
 export class ProxyWorker {
-  public hostCandidates: plugins.tsclass.network.IReverseProxyConfig[] = [];
+  public proxyConfigs: plugins.tsclass.network.IReverseProxyConfig[] = [];
   public httpsServer: plugins.https.Server; // | plugins.http.Server;
   public port = 8001;
   public router = new SmartproxyRouter();
@@ -160,10 +160,10 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     console.log(`OK: now listening for new connections on port ${this.port}`);
   }
 
-  public async updateCandidates(arrayOfReverseCandidates: plugins.tsclass.IReverseProxyConfig[]) {
-    this.hostCandidates = arrayOfReverseCandidates;
-    this.router.setNewCandidates(arrayOfReverseCandidates);
-    for (const hostCandidate of this.hostCandidates) {
+  public async updateProxyConfigs(proxyConfigsArg: plugins.tsclass.IReverseProxyConfig[]) {
+    this.proxyConfigs = proxyConfigsArg;
+    this.router.setNewProxyConfigs(proxyConfigsArg);
+    for (const hostCandidate of this.proxyConfigs) {
       // console.log(hostCandidate);
       this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
@@ -194,7 +194,7 @@ const proxyWorkerCalls = {
     await proxyWorkerInstance.start();
   },
   updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {
-    await proxyWorkerInstance.updateCandidates(configArray);
+    await proxyWorkerInstance.updateProxyConfigs(configArray);
   }
 };
 
