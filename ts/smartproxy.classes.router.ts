@@ -21,4 +21,12 @@ export class SmartproxyRouter {
     });
     return correspodingReverseProxyConfig;
   }
+
+  public routeWs(ws: plugins.ws) {
+    const originalHost = plugins.url.parse(ws.url).host;
+    const correspodingReverseProxyConfig = this.reverseProxyConfigs.find(reverseConfig => {
+      return reverseConfig.hostName === originalHost;
+    });
+    return correspodingReverseProxyConfig.destinationIp;
+  }
 }

@@ -126,15 +126,17 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
       });
     });
 
-    const Websocket = await import('ws');
-
     // Enable websockets
     const wss = new plugins.ws.Server({ server: this.httpsServer });
-    wss.on('connection', function connection(ws) {
+    wss.on('connection', (ws: plugins.ws) => {
       console.log('got connection for wsc');
       const wscConnected = plugins.smartpromise.defer();
 
-      const wsc = new Websocket.default(`${ws.url}`);
+      const wsc = new plugins.ws(this.router.routeReq(ws), {
+        headers: {
+          Host: ws.url
+        }
+      });
       wsc.on('open', () => {
         wscConnected.resolve();
       });

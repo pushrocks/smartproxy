@@ -1,8 +1,9 @@
 // node native scope
 import * as http from 'http';
 import * as https from 'https';
+import * as url from 'url';
 
-export { http, https };
+export { http, https, url };
 
 // tsclass scope
 import * as tsclass from '@tsclass/tsclass';
