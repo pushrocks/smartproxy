@@ -132,7 +132,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
       console.log('got connection for wsc');
       const wscConnected = plugins.smartpromise.defer();
 
-      const wsc = new plugins.ws(this.router.routeReq(ws), {
+      const wsc = new plugins.ws(this.router.routeWs(ws), {
         headers: {
           Host: ws.url
         }
