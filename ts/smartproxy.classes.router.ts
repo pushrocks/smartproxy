@@ -22,7 +22,7 @@ export class SmartproxyRouter {
     return correspodingReverseProxyConfig;
   }
 
-  public routeWs(ws: plugins.ws) {
+  public routeWs(ws: plugins.wsDefault) {
     const originalHost = plugins.url.parse(ws.url).host;
     const correspodingReverseProxyConfig = this.reverseProxyConfigs.find(reverseConfig => {
       return reverseConfig.hostName === originalHost;

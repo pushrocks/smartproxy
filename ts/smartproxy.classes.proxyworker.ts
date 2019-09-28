@@ -112,9 +112,18 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
           method: req.method,
           headers: req.headers
         },
-        true // lets make this streaming
+        true, // lets make this streaming
+        (request) => {
+          req.on('data', data => {
+            request.write(data);
+          });
+          req.on('end', data => {
+            request.end();
+          });
+        }
       );
       res.statusCode = response.statusCode;
+      console.log(response.statusCode);
       for (const header of Object.keys(response.headers)) {
         res.setHeader(header, response.headers[header]);
       }
@@ -128,11 +137,11 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 
     // Enable websockets
     const wss = new plugins.ws.Server({ server: this.httpsServer });
-    wss.on('connection', (ws: plugins.ws) => {
+    wss.on('connection', (ws: plugins.wsDefault) => {
       console.log('got connection for wsc');
       const wscConnected = plugins.smartpromise.defer();
 
-      const wsc = new plugins.ws(this.router.routeWs(ws), {
+      const wsc = new plugins.wsDefault(this.router.routeWs(ws), {
         headers: {
           Host: ws.url
         }
@@ -157,7 +166,8 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
         ws.close();
       });
     });
-
+    this.httpsServer.keepAliveTimeout = 61000;
+    this.httpsServer.headersTimeout = 65000;
     this.httpsServer.listen(this.port);
     console.log(`OK: now listening for new connections on port ${this.port}`);
   }

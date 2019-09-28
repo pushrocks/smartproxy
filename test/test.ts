@@ -14,7 +14,7 @@ tap.test('should start the testproxy', async () => {
 tap.test('should supply reverse proxy config', async () => {
   testProxy.updateReversConfigs([{
     destinationIp: 'localhost',
-    destinationPort: '8080',
+    destinationPort: '3000',
     hostName: 'central.eu',
     privateKey: `-----BEGIN PRIVATE KEY-----
 MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQDi2F/0kQr96mhe

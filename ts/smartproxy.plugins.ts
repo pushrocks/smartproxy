@@ -19,6 +19,7 @@ import * as smartsystem from '@pushrocks/smartsystem';
 export { smartrequest, smartpromise, smartspawn, smartsystem };
 
 // third party scope
-import ws from 'ws';
+import * as ws from 'ws';
+import wsDefault from 'ws';
 
-export { ws };
+export { wsDefault, ws };
