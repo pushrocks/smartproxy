@@ -7,6 +7,7 @@ export class ProxyWorker {
   public httpsServer: plugins.https.Server; // | plugins.http.Server;
   public port = 8001;
   public router = new SmartproxyRouter();
+  public socketMap = new plugins.lik.Objectmap<plugins.net.Socket>();
 
   /**
    * starts the proxyInstance
@@ -168,6 +169,14 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     });
     this.httpsServer.keepAliveTimeout = 61000;
     this.httpsServer.headersTimeout = 65000;
+
+    this.httpsServer.on('connection', connection => {
+      this.socketMap.add(connection);
+      connection.on('close', () => {
+        this.socketMap.remove(connection);
+      });
+    });
+
     this.httpsServer.listen(this.port);
     console.log(`OK: now listening for new connections on port ${this.port}`);
   }
@@ -190,6 +199,9 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     const done = plugins.smartpromise.defer();
     this.httpsServer.close(() => {
       done.resolve();
+    });
+    await this.socketMap.forEach(async (socket) => {
+      socket.destroy();
     });
     await done.promise;
   }
