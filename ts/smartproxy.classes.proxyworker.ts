@@ -14,6 +14,11 @@ export class ProxyWorker {
    */
   public async start() {
     this.httpsServer = plugins.https.createServer(
+      // ================
+      // Spotted this keypair in the code?
+      // Don't get exited:
+      // It is an invalid default keypair.
+      // ================
       {
         key: `-----BEGIN PRIVATE KEY-----
 MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQDi2F/0kQr96mhe
