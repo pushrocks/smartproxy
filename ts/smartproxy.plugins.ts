@@ -16,9 +16,10 @@ import * as lik from '@pushrocks/lik';
 import * as smartpromise from '@pushrocks/smartpromise';
 import * as smartrequest from '@pushrocks/smartrequest';
 import * as smartspawn from '@pushrocks/smartspawn';
+import * as smartstring from '@pushrocks/smartstring';
 import * as smartsystem from '@pushrocks/smartsystem';
 
-export { lik, smartrequest, smartpromise, smartspawn, smartsystem };
+export { lik, smartrequest, smartpromise, smartspawn, smartstring, smartsystem };
 
 // third party scope
 import * as ws from 'ws';

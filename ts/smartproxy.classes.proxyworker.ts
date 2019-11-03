@@ -13,8 +13,9 @@ export class ProxyWorker {
    * starts the proxyInstance
    */
   public async start() {
-    this.httpsServer = plugins.https.createServer({
-      key: `-----BEGIN PRIVATE KEY-----
+    this.httpsServer = plugins.https.createServer(
+      {
+        key: `-----BEGIN PRIVATE KEY-----
 MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQDi2F/0kQr96mhe
 3yEWvy2mRHOZoSSBtIqg6Bre4ZcMu901/cHNIjFnynNGFl9Se61yZbW2F3PfCt7+
 kQlHug1Cx+LFssvz+hLlB5cqJQZfRKx92DhbROygtxG9r7UBmx/fwx+JQ+HOHX9R
@@ -67,7 +68,7 @@ h+7fBVO49PLL0NWy+8GT8y7a04calFfLvZEA2UMaunBis3dE1KMFfJL/0JO+sKnF
 2TkK01XDDJURK5Lhuvc7WrK2rSJ/fK+0GA==
 -----END PRIVATE KEY-----
     `,
-    cert: `-----BEGIN CERTIFICATE-----
+        cert: `-----BEGIN CERTIFICATE-----
 MIIEljCCAn4CCQDY+ZbC9FASVjANBgkqhkiG9w0BAQsFADANMQswCQYDVQQGEwJE
 RTAeFw0xOTA5MjAxNjAxNDRaFw0yMDA5MTkxNjAxNDRaMA0xCzAJBgNVBAYTAkRF
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA4thf9JEK/epoXt8hFr8t
@@ -95,46 +96,89 @@ r8d9QwrK+WaqVi2ofbMfMByVF72jgeJNa4nxwT9bVbu/Q1T2Lt+YPb4pQ7yCoUgS
 JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 -----END CERTIFICATE-----
     `
-    }, async (req, res) => {
-      console.log('got request');
-      const destinationConfig = this.router.routeReq(req);
-      let destinationUrl: string;
-      if (destinationConfig) {
-        destinationUrl = `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`;
-      } else {
-        res.writeHead(404);
-        res.end('This route is not available on this server\n');
-        return;
-      }
-      console.log(destinationUrl);
-      const response = await plugins.smartrequest.request(
-        destinationUrl,
-        {
-          method: req.method,
-          headers: req.headers
-        },
-        true, // lets make this streaming
-        (request) => {
-          req.on('data', data => {
-            request.write(data);
-          });
-          req.on('end', data => {
-            request.end();
-          });
+      },
+      async (req, res) => {
+        console.log('got request');
+        const destinationConfig = this.router.routeReq(req);
+
+        // endRequest function
+        const endRequest = (
+          statusArg: number = 404,
+          messageArg: string = 'This route is not available on this server.',
+          headers: plugins.http.OutgoingHttpHeaders = {}
+        ) => {
+          res.writeHead(statusArg, messageArg);
+          res.end(messageArg);
+        };
+
+        // authentication
+        if (destinationConfig.authentication) {
+          const authInfo = destinationConfig.authentication;
+          switch (authInfo.type) {
+            case 'Basic':
+              const authHeader = req.headers.authorization;
+              if (authHeader) {
+                if (!authHeader.includes('Basic ')) {
+                  return endRequest(401, 'Authentication required', {
+                    'WWW-Authenticate': 'Basic realm="Access to the staging site", charset="UTF-8"'
+                  });
+                }
+                const authStringBase64 = req.headers.authorization.replace('Basic ', '');
+                const authString: string = plugins.smartstring.base64.decode(authStringBase64);
+                const userPassArray = authString.split(':');
+                const user = userPassArray[0];
+                const pass = userPassArray[1];
+                if (user === authInfo.user && pass === authInfo.pass) {
+                  console.log('request successfully authenticated');
+                } else {
+                  return endRequest(403, 'Forbidden: Wrong credentials');
+                }
+              }
+              break;
+            default:
+              return endRequest(
+                403,
+                'Forbidden: unsupported authentication method configured. Please report to the admin.'
+              );
+          }
         }
-      );
-      res.statusCode = response.statusCode;
-      console.log(response.statusCode);
-      for (const header of Object.keys(response.headers)) {
-        res.setHeader(header, response.headers[header]);
+
+        let destinationUrl: string;
+        if (destinationConfig) {
+          destinationUrl = `http://${destinationConfig.destinationIp}:${destinationConfig.destinationPort}${req.url}`;
+        } else {
+          return endRequest();
+        }
+        console.log(destinationUrl);
+        const response = await plugins.smartrequest.request(
+          destinationUrl,
+          {
+            method: req.method,
+            headers: req.headers
+          },
+          true, // lets make this streaming
+          request => {
+            req.on('data', data => {
+              request.write(data);
+            });
+            req.on('end', data => {
+              request.end();
+            });
+          }
+        );
+        res.statusCode = response.statusCode;
+        console.log(response.statusCode);
+        for (const header of Object.keys(response.headers)) {
+          res.setHeader(header, response.headers[header]);
+        }
+        response.on('data', data => {
+          res.write(data);
+        });
+        response.on('end', () => {
+          res.end();
+        });
       }
-      response.on('data', data => {
-        res.write(data);
-      });
-      response.on('end', () => {
-        res.end();
-      });
-    });
+    );
 
     // Enable websockets
     const wss = new plugins.ws.Server({ server: this.httpsServer });
@@ -188,7 +232,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
       // console.log(hostCandidate);
       this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
-        key: hostCandidate.privateKey,
+        key: hostCandidate.privateKey
       });
     }
     /* this.httpsServer.close();
@@ -200,7 +244,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.httpsServer.close(() => {
       done.resolve();
     });
-    await this.socketMap.forEach(async (socket) => {
+    await this.socketMap.forEach(async socket => {
       socket.destroy();
     });
     await done.promise;
