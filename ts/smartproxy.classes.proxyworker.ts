@@ -18,6 +18,7 @@ export class ProxyWorker {
       // Spotted this keypair in the code?
       // Don't get exited:
       // It is an invalid default keypair.
+      // For proper requests custom domain level keypairs are used that are provided in the reverse config
       // ================
       {
         key: `-----BEGIN PRIVATE KEY-----
