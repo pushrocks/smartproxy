@@ -231,7 +231,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     console.log(`ProxyWorker -> OK: now listening for new connections on port ${this.port}`);
   }
 
-  public async updateProxyConfigs(proxyConfigsArg: plugins.tsclass.IReverseProxyConfig[]) {
+  public async updateProxyConfigs(proxyConfigsArg: plugins.tsclass.network.IReverseProxyConfig[]) {
     this.proxyConfigs = proxyConfigsArg;
     this.router.setNewProxyConfigs(proxyConfigsArg);
     for (const hostCandidate of this.proxyConfigs) {
