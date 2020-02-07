@@ -19,7 +19,7 @@ export class SmartProxy {
     this.options = optionsArg;
   }
 
-  public async updateReversConfigs(
+  public async updateReverseConfigs(
     reverseConfigsArg: plugins.tsclass.network.IReverseProxyConfig[]
   ) {
     // TODO search for old hostCandidates with that target
