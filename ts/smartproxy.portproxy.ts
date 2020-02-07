@@ -6,15 +6,16 @@ let netServer: plugins.net.Server;
 const portProxyCalls = {
   start: async (portArg = 8000) => {
     netServer = net
-    .createServer(from => {
-      const to = net.createConnection({
-        host: 'localhost',
-        port: 8001
-      });
-      from.pipe(to);
-      to.pipe(from);
-    })
-    .listen(portArg);
+      .createServer(from => {
+        const to = net.createConnection({
+          host: 'localhost',
+          port: 8001
+        });
+        from.pipe(to);
+        to.pipe(from);
+      })
+      .listen(portArg);
+    console.log(`PortProxy -> OK: Now listening on port ${portArg}`);
   },
   stop: async () => {
     const done = plugins.smartpromise.defer();

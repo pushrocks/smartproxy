@@ -12,11 +12,12 @@ tap.test('should start the testproxy', async () => {
 });
 
 tap.test('should supply reverse proxy config', async () => {
-  testProxy.updateReversConfigs([{
-    destinationIp: 'localhost',
-    destinationPort: '3000',
-    hostName: 'push.rocks',
-    privateKey: `-----BEGIN PRIVATE KEY-----
+  testProxy.updateReversConfigs([
+    {
+      destinationIp: 'localhost',
+      destinationPort: '3000',
+      hostName: 'push.rocks',
+      privateKey: `-----BEGIN PRIVATE KEY-----
 MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQDi2F/0kQr96mhe
 3yEWvy2mRHOZoSSBtIqg6Bre4ZcMu901/cHNIjFnynNGFl9Se61yZbW2F3PfCt7+
 kQlHug1Cx+LFssvz+hLlB5cqJQZfRKx92DhbROygtxG9r7UBmx/fwx+JQ+HOHX9R
@@ -69,7 +70,7 @@ h+7fBVO49PLL0NWy+8GT8y7a04calFfLvZEA2UMaunBis3dE1KMFfJL/0JO+sKnF
 2TkK01XDDJURK5Lhuvc7WrK2rSJ/fK+0GA==
 -----END PRIVATE KEY-----
     `,
-    publicKey: `-----BEGIN CERTIFICATE-----
+      publicKey: `-----BEGIN CERTIFICATE-----
 MIIEljCCAn4CCQDY+ZbC9FASVjANBgkqhkiG9w0BAQsFADANMQswCQYDVQQGEwJE
 RTAeFw0xOTA5MjAxNjAxNDRaFw0yMDA5MTkxNjAxNDRaMA0xCzAJBgNVBAYTAkRF
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA4thf9JEK/epoXt8hFr8t
@@ -97,7 +98,8 @@ r8d9QwrK+WaqVi2ofbMfMByVF72jgeJNa4nxwT9bVbu/Q1T2Lt+YPb4pQ7yCoUgS
 JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 -----END CERTIFICATE-----
     `
-  }]);
+    }
+  ]);
 });
 
 tap.test('should wait for 60 seconds', async tools => {

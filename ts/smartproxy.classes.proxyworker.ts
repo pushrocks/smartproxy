@@ -228,7 +228,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     });
 
     this.httpsServer.listen(this.port);
-    console.log(`OK: now listening for new connections on port ${this.port}`);
+    console.log(`ProxyWorker -> OK: now listening for new connections on port ${this.port}`);
   }
 
   public async updateProxyConfigs(proxyConfigsArg: plugins.tsclass.IReverseProxyConfig[]) {
