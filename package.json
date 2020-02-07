@@ -1,6 +1,6 @@
 {
   "name": "@pushrocks/smartproxy",
-  "version": "1.0.38",
+  "version": "2.0.0",
   "private": false,
   "description": "a proxy for handling high workloads of proxying",
   "main": "dist/index.js",
