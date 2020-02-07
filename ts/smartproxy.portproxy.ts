@@ -1,21 +1,24 @@
 import * as plugins from './smartproxy.plugins';
 import { expose } from '@pushrocks/smartspawn';
 import * as net from 'net';
-const server = net
-  .createServer(from => {
-    const to = net.createConnection({
-      host: 'localhost',
-      port: 8001
-    });
-    from.pipe(to);
-    to.pipe(from);
-  })
-  .listen(8000);
+let netServer: plugins.net.Server;
 
 const portProxyCalls = {
+  start: async (portArg = 8000) => {
+    netServer = net
+    .createServer(from => {
+      const to = net.createConnection({
+        host: 'localhost',
+        port: 8001
+      });
+      from.pipe(to);
+      to.pipe(from);
+    })
+    .listen(portArg);
+  },
   stop: async () => {
     const done = plugins.smartpromise.defer();
-    server.close(() => {
+    netServer.close(() => {
       done.resolve();
     });
     await done.promise;

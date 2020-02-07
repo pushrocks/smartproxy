@@ -3,11 +3,21 @@ import * as plugins from './smartproxy.plugins';
 import { TProxyWorkerCalls } from './smartproxy.classes.proxyworker';
 import { TPortProxyCalls } from './smartproxy.portproxy';
 
+export interface ISmartProxyOptions {
+  port?: number;
+}
+
 export class SmartProxy {
   public smartsystem = new plugins.smartsystem.Smartsystem();
   public reverseConfigs: plugins.tsclass.network.IReverseProxyConfig[] = [];
   public proxyWorkerFunctions: plugins.smartspawn.ModuleThread<TProxyWorkerCalls>;
   public portProxyFunctions: plugins.smartspawn.ModuleThread<TPortProxyCalls>;
+
+  public options: ISmartProxyOptions;
+
+  constructor(optionsArg: ISmartProxyOptions = {}) {
+    this.options = optionsArg;
+  }
 
   public async updateReversConfigs(
     reverseConfigsArg: plugins.tsclass.network.IReverseProxyConfig[]
@@ -28,6 +38,8 @@ export class SmartProxy {
     this.portProxyFunctions = await plugins.smartspawn.spawn<TPortProxyCalls>(
       new plugins.smartspawn.Worker('./smartproxy.portproxy')
     );
+
+    await this.portProxyFunctions.start(this.options.port);
     await this.proxyWorkerFunctions.start();
 
     console.log('successfully spawned portproxy and proxyworkers!');

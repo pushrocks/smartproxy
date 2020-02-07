@@ -4,7 +4,7 @@ import * as smartproxy from '../ts/index';
 let testProxy: smartproxy.SmartProxy;
 
 tap.test('first test', async () => {
-  testProxy = new smartproxy.SmartProxy();
+  testProxy = new smartproxy.SmartProxy({});
 });
 
 tap.test('should start the testproxy', async () => {
@@ -15,7 +15,7 @@ tap.test('should supply reverse proxy config', async () => {
   testProxy.updateReversConfigs([{
     destinationIp: 'localhost',
     destinationPort: '3000',
-    hostName: 'central.eu',
+    hostName: 'push.rocks',
     privateKey: `-----BEGIN PRIVATE KEY-----
 MIIJRQIBADANBgkqhkiG9w0BAQEFAASCCS8wggkrAgEAAoICAQDi2F/0kQr96mhe
 3yEWvy2mRHOZoSSBtIqg6Bre4ZcMu901/cHNIjFnynNGFl9Se61yZbW2F3PfCt7+
@@ -101,7 +101,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 });
 
 tap.test('should wait for 60 seconds', async tools => {
-  await tools.delayFor(60000);
+  await tools.delayFor(10000);
 });
 
 tap.test('should close the testproxy', async () => {
