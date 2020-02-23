@@ -7,14 +7,13 @@ let httpServer: plugins.http.Server;
 const portProxyCalls = {
   start: async (portArg = 8000) => {
     httpServer = plugins.http.createServer((request, response) => {
-      
       const requestUrl = new URL(request.url, `http://${request.headers.host}`);
       const completeUrlWithoutProtocol = `${requestUrl.host}${requestUrl.pathname}${requestUrl.search}`;
       const redirectUrl = `https://${completeUrlWithoutProtocol}`;
       console.log(`Got http request for http://${completeUrlWithoutProtocol}`);
       console.log(`Redirecting to ${redirectUrl}`);
       response.writeHead(302, {
-        'Location': redirectUrl
+        Location: redirectUrl
       });
       response.end();
     });
