@@ -12,7 +12,7 @@ tap.test('should start the testproxy', async () => {
 });
 
 tap.test('should supply reverse proxy config', async () => {
-  testProxy.updateReversConfigs([
+  testProxy.updateReverseConfigs([
     {
       destinationIp: 'localhost',
       destinationPort: '3000',
