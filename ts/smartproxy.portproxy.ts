@@ -18,6 +18,14 @@ const portProxyCalls = {
       response.end();
     });
     httpServer.listen(7999);
+    const cleanUpSockets = (from: plugins.net.Socket, to: plugins.net.Socket) => {
+      from.end();
+      to.end();
+      from.removeAllListeners();
+      to.removeEventListener();
+      from.unpipe();
+      to.unpipe();
+    }
     netServer = net
       .createServer((from) => {
         const to = net.createConnection({
@@ -27,14 +35,29 @@ const portProxyCalls = {
         from.pipe(to);
         to.pipe(from);
         from.on('error', () => {
-          from.end(), to.end();
+          cleanUpSockets(from, to);
         });
         to.on('error', () => {
-          from.end(), to.end();
+          cleanUpSockets(from, to);
         });
         from.on('close', () => {
-          to.end();
+          cleanUpSockets(from, to);
         });
+        to.on('close', () => {
+          cleanUpSockets(from, to);
+        });
+        from.on('timeout', () => {
+          cleanUpSockets(from, to);
+        });
+        to.on('timeout', () => {
+          cleanUpSockets(from, to);
+        });
+        from.on('end', () => {
+          cleanUpSockets(from, to);
+        })
+        to.on('end', () => {
+          cleanUpSockets(from, to);
+        })
       })
       .listen(portArg);
     console.log(`PortProxy -> OK: Now listening on port ${portArg}`);
