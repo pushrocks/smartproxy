@@ -24,8 +24,13 @@ const portProxyCalls = {
           host: 'localhost',
           port: 8001
         });
-        from.pipe(to);
-        to.pipe(from);
+        from.pipe(to)
+        to.pipe(from)
+        from.on('error', () => { from.end(), to.end() });
+        to.on('error', () => { from.end(), to.end() });
+        from.on('close', () => {
+          to.end();
+        })
       })
       .listen(portArg);
     console.log(`PortProxy -> OK: Now listening on port ${portArg}`);
