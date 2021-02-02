@@ -13,24 +13,28 @@ const portProxyCalls = {
       console.log(`Got http request for http://${completeUrlWithoutProtocol}`);
       console.log(`Redirecting to ${redirectUrl}`);
       response.writeHead(302, {
-        Location: redirectUrl
+        Location: redirectUrl,
       });
       response.end();
     });
     httpServer.listen(7999);
     netServer = net
-      .createServer(from => {
+      .createServer((from) => {
         const to = net.createConnection({
           host: 'localhost',
-          port: 8001
+          port: 8001,
         });
-        from.pipe(to)
-        to.pipe(from)
-        from.on('error', () => { from.end(), to.end() });
-        to.on('error', () => { from.end(), to.end() });
+        from.pipe(to);
+        to.pipe(from);
+        from.on('error', () => {
+          from.end(), to.end();
+        });
+        to.on('error', () => {
+          from.end(), to.end();
+        });
         from.on('close', () => {
           to.end();
-        })
+        });
       })
       .listen(portArg);
     console.log(`PortProxy -> OK: Now listening on port ${portArg}`);
@@ -43,7 +47,7 @@ const portProxyCalls = {
       });
     });
     await done.promise;
-  }
+  },
 };
 
 export type TPortProxyCalls = typeof portProxyCalls;

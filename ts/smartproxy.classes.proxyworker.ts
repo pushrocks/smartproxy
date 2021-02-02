@@ -7,7 +7,7 @@ export class ProxyWorker {
   public httpsServer: plugins.https.Server; // | plugins.http.Server;
   public port = 8001;
   public router = new SmartproxyRouter();
-  public socketMap = new plugins.lik.Objectmap<plugins.net.Socket>();
+  public socketMap = new plugins.lik.ObjectMap<plugins.net.Socket>();
 
   /**
    * starts the proxyInstance
@@ -101,7 +101,7 @@ TzJTbTCteOUUJTrcfZ0gGhGkF4nYLmX5OI+TPqrDJf0fZ+mzAEHzDDVXcBYpYRDr
 r8d9QwrK+WaqVi2ofbMfMByVF72jgeJNa4nxwT9bVbu/Q1T2Lt+YPb4pQ7yCoUgS
 JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 -----END CERTIFICATE-----
-    `
+    `,
       },
       async (req, res) => {
         console.log('got request');
@@ -126,7 +126,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
               if (authHeader) {
                 if (!authHeader.includes('Basic ')) {
                   return endRequest(401, 'Authentication required', {
-                    'WWW-Authenticate': 'Basic realm="Access to the staging site", charset="UTF-8"'
+                    'WWW-Authenticate': 'Basic realm="Access to the staging site", charset="UTF-8"',
                   });
                 }
                 const authStringBase64 = req.headers.authorization.replace('Basic ', '');
@@ -160,14 +160,14 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
           destinationUrl,
           {
             method: req.method,
-            headers: req.headers
+            headers: req.headers,
           },
           true, // lets make this streaming
-          request => {
-            req.on('data', data => {
+          (request) => {
+            req.on('data', (data) => {
               request.write(data);
             });
-            req.on('end', data => {
+            req.on('end', (data) => {
               request.end();
             });
           }
@@ -177,7 +177,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
         for (const header of Object.keys(response.headers)) {
           res.setHeader(header, response.headers[header]);
         }
-        response.on('data', data => {
+        response.on('data', (data) => {
           res.write(data);
         });
         response.on('end', () => {
@@ -194,33 +194,33 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 
       const wsc = new plugins.wsDefault(this.router.routeWs(ws), {
         headers: {
-          Host: ws.url
-        }
+          Host: ws.url,
+        },
       });
       wsc.on('open', () => {
         wscConnected.resolve();
       });
 
-      ws.on('message', async message => {
+      ws.on('message', async (message) => {
         await wscConnected.promise;
         wsc.emit('message', message);
       });
-      wsc.on('message', message => {
+      wsc.on('message', (message) => {
         ws.emit('message', message);
       });
 
       // handle closing
-      ws.on('close', message => {
+      ws.on('close', (message) => {
         wsc.close();
       });
-      wsc.on('close', message => {
+      wsc.on('close', (message) => {
         ws.close();
       });
     });
     this.httpsServer.keepAliveTimeout = 61000;
     this.httpsServer.headersTimeout = 65000;
 
-    this.httpsServer.on('connection', connection => {
+    this.httpsServer.on('connection', (connection) => {
       this.socketMap.add(connection);
       connection.on('close', () => {
         this.socketMap.remove(connection);
@@ -238,7 +238,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
       // console.log(hostCandidate);
       this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
-        key: hostCandidate.privateKey
+        key: hostCandidate.privateKey,
       });
     }
     /* this.httpsServer.close();
@@ -250,7 +250,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.httpsServer.close(() => {
       done.resolve();
     });
-    await this.socketMap.forEach(async socket => {
+    await this.socketMap.forEach(async (socket) => {
       socket.destroy();
     });
     await done.promise;
@@ -269,7 +269,7 @@ const proxyWorkerCalls = {
   },
   updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {
     await proxyWorkerInstance.updateProxyConfigs(configArray);
-  }
+  },
 };
 
 export type TProxyWorkerCalls = typeof proxyWorkerCalls;

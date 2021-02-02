@@ -16,7 +16,7 @@ export class SmartproxyRouter {
    */
   public routeReq(req: plugins.http.IncomingMessage): plugins.tsclass.network.IReverseProxyConfig {
     const originalHost = req.headers.host;
-    const correspodingReverseProxyConfig = this.reverseProxyConfigs.find(reverseConfig => {
+    const correspodingReverseProxyConfig = this.reverseProxyConfigs.find((reverseConfig) => {
       return reverseConfig.hostName === originalHost;
     });
     return correspodingReverseProxyConfig;
@@ -24,7 +24,7 @@ export class SmartproxyRouter {
 
   public routeWs(ws: plugins.wsDefault) {
     const originalHost = plugins.url.parse(ws.url).host;
-    const correspodingReverseProxyConfig = this.reverseProxyConfigs.find(reverseConfig => {
+    const correspodingReverseProxyConfig = this.reverseProxyConfigs.find((reverseConfig) => {
       return reverseConfig.hostName === originalHost;
     });
     return correspodingReverseProxyConfig.destinationIp;

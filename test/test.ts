@@ -97,12 +97,12 @@ TzJTbTCteOUUJTrcfZ0gGhGkF4nYLmX5OI+TPqrDJf0fZ+mzAEHzDDVXcBYpYRDr
 r8d9QwrK+WaqVi2ofbMfMByVF72jgeJNa4nxwT9bVbu/Q1T2Lt+YPb4pQ7yCoUgS
 JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
 -----END CERTIFICATE-----
-    `
-    }
+    `,
+    },
   ]);
 });
 
-tap.test('should wait for 60 seconds', async tools => {
+tap.test('should wait for 60 seconds', async (tools) => {
   await tools.delayFor(10000);
 });
 
