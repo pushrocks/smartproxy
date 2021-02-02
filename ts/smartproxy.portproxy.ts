@@ -22,7 +22,7 @@ const portProxyCalls = {
       from.end();
       to.end();
       from.removeAllListeners();
-      to.removeEventListener();
+      to.removeAllListeners();
       from.unpipe();
       to.unpipe();
     }
