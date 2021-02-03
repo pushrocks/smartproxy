@@ -8,7 +8,11 @@ export class ProxyWorker {
   public port = 8001;
   public router = new SmartproxyRouter();
   public socketMap = new plugins.lik.ObjectMap<plugins.net.Socket>();
-  public defaultHeaders: {[key: string]: string} = {};
+  public defaultHeaders: { [key: string]: string } = {};
+
+  public alreadyAddedReverseConfigs: {
+    [hostName: string]: plugins.tsclass.network.IReverseProxyConfig;
+  } = {};
 
   /**
    * starts the proxyInstance
@@ -162,7 +166,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
           {
             method: req.method,
             headers: req.headers,
-            keepAlive: true
+            keepAlive: true,
           },
           true, // lets make this streaming
           (request) => {
@@ -178,7 +182,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
         console.log(response.statusCode);
         for (const defaultHeader of Object.keys(this.defaultHeaders)) {
           res.setHeader(defaultHeader, this.defaultHeaders[defaultHeader]);
-        } 
+        }
         for (const header of Object.keys(response.headers)) {
           res.setHeader(header, response.headers[header]);
         }
@@ -215,11 +219,20 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
       });
 
       // handle closing
-      ws.on('close', (message) => {
+      const cleanUp = () => {
+        ws.removeAllListeners();
+        ws.close();
+        ws.terminate();
+        wsc.removeAllListeners();
         wsc.close();
+        wsc.terminate();
+      };
+
+      ws.on('close', (message) => {
+        cleanUp();
       });
       wsc.on('close', (message) => {
-        ws.close();
+        cleanUp();
       });
     });
     this.httpsServer.keepAliveTimeout = 61000;
@@ -228,22 +241,22 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.httpsServer.on('connection', (connection: plugins.net.Socket) => {
       connection.setTimeout(120000);
       this.socketMap.add(connection);
-      const cleanupConnection = (connectionArg: plugins.net.Socket) => {
-        connectionArg.removeAllListeners();
+      const cleanupConnection = () => {
         this.socketMap.remove(connection);
+        connection.removeAllListeners();
         connection.destroy();
-      }
+      };
       connection.on('close', () => {
-        cleanupConnection(connection);
+        cleanupConnection();
       });
       connection.on('error', () => {
-        cleanupConnection(connection);
+        cleanupConnection();
       });
       connection.on('end', () => {
-        cleanupConnection(connection);
+        cleanupConnection();
       });
       connection.on('timeout', () => {
-        cleanupConnection(connection);
+        cleanupConnection();
       });
     });
 
@@ -256,10 +269,27 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.router.setNewProxyConfigs(proxyConfigsArg);
     for (const hostCandidate of this.proxyConfigs) {
       // console.log(hostCandidate);
+
+      const existingHostNameConfig = this.alreadyAddedReverseConfigs[hostCandidate.hostName];
+
+      if (!existingHostNameConfig) {
+        this.alreadyAddedReverseConfigs[hostCandidate.hostName] = hostCandidate;
+      } else {
+        if (
+          existingHostNameConfig.publicKey === hostCandidate.publicKey &&
+          existingHostNameConfig.privateKey === hostCandidate.privateKey
+        ) {
+          continue;
+        } else {
+          this.alreadyAddedReverseConfigs[hostCandidate.hostName] = hostCandidate;
+        }
+      }
+
       this.httpsServer.addContext(hostCandidate.hostName, {
         cert: hostCandidate.publicKey,
         key: hostCandidate.privateKey,
       });
+      this.httpsServer;
     }
     /* this.httpsServer.close();
     this.httpsServer.listen(this.port); */
@@ -290,12 +320,12 @@ const proxyWorkerCalls = {
   updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {
     await proxyWorkerInstance.updateProxyConfigs(configArray);
   },
-  addDefaultHeaders: async (headersArg: {[key: string]: string}) => {
+  addDefaultHeaders: async (headersArg: { [key: string]: string }) => {
     proxyWorkerInstance.defaultHeaders = {
       ...proxyWorkerInstance.defaultHeaders,
-      ...headersArg
+      ...headersArg,
     };
-  }
+  },
 };
 
 export type TProxyWorkerCalls = typeof proxyWorkerCalls;
