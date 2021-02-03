@@ -8,6 +8,7 @@ export class ProxyWorker {
   public port = 8001;
   public router = new SmartproxyRouter();
   public socketMap = new plugins.lik.ObjectMap<plugins.net.Socket>();
+  public defaultHeaders: {[key: string]: string} = {};
 
   /**
    * starts the proxyInstance
@@ -174,6 +175,9 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
         );
         res.statusCode = response.statusCode;
         console.log(response.statusCode);
+        for (const defaultHeader of Object.keys(this.defaultHeaders)) {
+          res.setHeader(defaultHeader, this.defaultHeaders[defaultHeader]);
+        } 
         for (const header of Object.keys(response.headers)) {
           res.setHeader(header, response.headers[header]);
         }
@@ -270,6 +274,7 @@ const proxyWorkerCalls = {
   updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {
     await proxyWorkerInstance.updateProxyConfigs(configArray);
   },
+  addDefaultHeaders: async (headers: {[key: string]: string}) => {}
 };
 
 export type TProxyWorkerCalls = typeof proxyWorkerCalls;
