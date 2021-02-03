@@ -34,6 +34,7 @@ const portProxyCalls = {
           host: 'localhost',
           port: 8001,
         });
+        from.setTimeout(120000);
         from.pipe(to);
         to.pipe(from);
         from.on('error', () => {
