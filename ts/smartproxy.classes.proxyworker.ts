@@ -162,6 +162,7 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
           {
             method: req.method,
             headers: req.headers,
+            keepAlive: true
           },
           true, // lets make this streaming
           (request) => {
