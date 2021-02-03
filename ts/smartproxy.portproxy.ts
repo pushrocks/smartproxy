@@ -25,6 +25,8 @@ const portProxyCalls = {
       to.removeAllListeners();
       from.unpipe();
       to.unpipe();
+      from.destroy();
+      to.destroy();
     }
     netServer = net
       .createServer((from) => {
