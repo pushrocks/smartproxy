@@ -290,7 +290,12 @@ const proxyWorkerCalls = {
   updateReverseConfigs: async (configArray: plugins.tsclass.network.IReverseProxyConfig[]) => {
     await proxyWorkerInstance.updateProxyConfigs(configArray);
   },
-  addDefaultHeaders: async (headers: {[key: string]: string}) => {}
+  addDefaultHeaders: async (headersArg: {[key: string]: string}) => {
+    proxyWorkerInstance.defaultHeaders = {
+      ...proxyWorkerInstance.defaultHeaders,
+      ...headersArg
+    };
+  }
 };
 
 export type TProxyWorkerCalls = typeof proxyWorkerCalls;
