@@ -228,21 +228,22 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.httpsServer.on('connection', (connection: plugins.net.Socket) => {
       connection.setTimeout(120000);
       this.socketMap.add(connection);
-      connection.on('close', () => {
+      const cleanupConnection = (connectionArg: plugins.net.Socket) => {
+        connectionArg.removeAllListeners();
         this.socketMap.remove(connection);
         connection.destroy();
+      }
+      connection.on('close', () => {
+        cleanupConnection(connection);
       });
       connection.on('error', () => {
-        this.socketMap.remove(connection);
-        connection.destroy();
+        cleanupConnection(connection);
       });
       connection.on('end', () => {
-        this.socketMap.remove(connection);
-        connection.destroy();
+        cleanupConnection(connection);
       });
       connection.on('timeout', () => {
-        this.socketMap.remove(connection);
-        connection.destroy();
+        cleanupConnection(connection);
       });
     });
 

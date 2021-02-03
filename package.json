@@ -30,7 +30,7 @@
     "@pushrocks/smartsystem": "^2.0.9",
     "@tsclass/tsclass": "^3.0.29",
     "@types/ws": "^7.4.0",
-    "ws": "^7.4.2"
+    "ws": "^7.4.3"
   },
   "files": [
     "ts/**/*",
