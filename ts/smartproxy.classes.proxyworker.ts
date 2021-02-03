@@ -225,10 +225,24 @@ JNj2Dr5H0XoLFFnvuvzcRbhlJ9J67JzR+7g=
     this.httpsServer.keepAliveTimeout = 61000;
     this.httpsServer.headersTimeout = 65000;
 
-    this.httpsServer.on('connection', (connection) => {
+    this.httpsServer.on('connection', (connection: plugins.net.Socket) => {
+      connection.setTimeout(120000);
       this.socketMap.add(connection);
       connection.on('close', () => {
         this.socketMap.remove(connection);
+        connection.destroy();
+      });
+      connection.on('error', () => {
+        this.socketMap.remove(connection);
+        connection.destroy();
+      });
+      connection.on('end', () => {
+        this.socketMap.remove(connection);
+        connection.destroy();
+      });
+      connection.on('timeout', () => {
+        this.socketMap.remove(connection);
+        connection.destroy();
       });
     });
 
