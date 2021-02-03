@@ -45,6 +45,10 @@ export class SmartProxy {
     console.log('successfully spawned portproxy and proxyworkers!');
   }
 
+  public async updateDefaultHeaders(defaultHeadersArg: {[key: string]: string}) {
+    await this.proxyWorkerFunctions.addDefaultHeaders(defaultHeadersArg);
+  }
+
   public async stop() {
     await this.proxyWorkerFunctions.stop();
     await plugins.smartspawn.Thread.terminate(this.proxyWorkerFunctions);
